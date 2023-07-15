@@ -18,7 +18,7 @@ const Skills = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [profile, setProfile] = useState('');
-  const [skill, setSkill] = useState([]);
+  const [skill, setSkill] = useState<any>('' || []);
   const pageSize = 3;
   const navigate = useNavigate()
 
@@ -42,14 +42,17 @@ const Skills = () => {
   }, [page, pageSize])
 
 
-
+  const handleChangeSelect = (e: any) => {
+    let value = Array.from(e.target.selectedOptions, (option: any) => option.value);
+    setSkill(value)
+  }
 
   const handlePageChange = (value: number) => {
     setPage(value);
   };
 
   const onSubmit = async () => {
-    const res = await axios.post(`${import.meta.env.VITE_API_URL}/users`, { email, username, password, profile, skill })
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/user`, { email, username, password, profile, skills: skill })
     if (res.data) {
       setShowModal(!showModal)
     }
@@ -80,7 +83,7 @@ const Skills = () => {
               <a href="#" className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" onClick={() => handlePageChange(page - 1)}>
                 <span className="sr-only">Previous</span>
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                  <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                 </svg>
               </a>
 
@@ -89,7 +92,7 @@ const Skills = () => {
               <a href="#" className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" onClick={() => handlePageChange(page + 1)}>
                 <span className="sr-only">Next</span>
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                  <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                 </svg>
               </a>
             </nav>
@@ -123,12 +126,13 @@ const Skills = () => {
               <tbody>
 
                 {data && data.length > 0 && data.map((el: SkillProps) => {
-                  return (<tr> <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                    <h5 className="font-medium text-black dark:text-white">
-                      {el?.skill_name}
-                    </h5>
-
-                  </td>  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                  return (<tr key={el.id}>
+                    <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                      <h5 className="font-medium text-black dark:text-white">
+                        {el?.skill_name}
+                      </h5>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
                         <button className="hover:text-primary">
                           <svg
@@ -155,7 +159,8 @@ const Skills = () => {
                           </button>)}
 
                       </div>
-                    </td></tr>)
+                    </td>
+                  </tr>)
                 })}
 
 
@@ -216,7 +221,7 @@ const Skills = () => {
                                 type="text"
                                 value={username}
                                 onChange={(event) =>
-                                  setName(event.target.value)
+                                  setUsername(event.target.value)
                                 }
                                 name='name'
                                 placeholder="Enter Username"
@@ -267,6 +272,44 @@ const Skills = () => {
                                   <option value="expert">Expert</option>
                                   <option value="trainer">Trainer</option>
                                   <option value="competitor">Competitor</option>
+                                </select>
+                                <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
+                                  <svg
+                                    className="fill-current"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <g opacity="0.8">
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                                        fill=""
+                                      ></path>
+                                    </g>
+                                  </svg>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="mb-4.5">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Skill
+                              </label>
+                              <div className="relative z-20 bg-transparent dark:bg-form-input">
+                                <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" multiple={true} value={skill || []} name='skill' onChange={(event) =>
+                                  handleChangeSelect(event)
+                                }>
+                                  {
+                                    data.map((el: SkillProps) => {
+                                      return (<option key={el.id} value={el?.skill_name}>{el?.skill_name}</option>)
+                                    })
+                                  }
+
+
                                 </select>
                                 <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
                                   <svg
